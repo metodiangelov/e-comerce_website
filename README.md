@@ -46,7 +46,7 @@ npm test
 
 ## Качване в GitHub
 
-1. Създай празно repository в GitHub, например `koshnitsa-shop`. Не добавяй README или `.gitignore` от GitHub, защото те вече са в проекта.
+1. Създай празно repository в GitHub, например `e-comerce_website`. Не добавяй README или `.gitignore` от GitHub, защото те вече са в проекта.
 2. В PowerShell отвори папката на проекта и изпълни:
 
 ```powershell

@@ -399,6 +399,11 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, time: new Date().toISOString(), speedyConfigured: speedyConfigured() });
 });
 
+// Hidden admin entry. The panel is still protected by ADMIN_PASSWORD.
+app.get(['/admin', '/admin/'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
   if (res.headersSent) return next(error);

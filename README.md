@@ -54,7 +54,7 @@ git init
 git add .
 git commit -m "Initial Koshnitsa shop"
 git branch -M main
-git remote add origin https://github.com/ТВОЕТО-ИМЕ/koshnitsa-shop.git
+git remote add origin https://github.com/metodiangelov/e-comerce_website.git
 git push -u origin main
 ```
 

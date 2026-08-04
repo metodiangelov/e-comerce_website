@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кошница — онлайн магазин</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2B22;
+    --paper:#EFF2E9;
+    --surface:#FBFAF5;
+    --primary:#234D35;
+    --primary-dark:#162E22;
+    --accent:#D98E2B;
+    --accent2:#C1442D;
+    --line:#D9D9C8;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'Work Sans', sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh;}
+  h1,h2,h3,.display{font-family:'Space Grotesk', sans-serif; letter-spacing:-0.01em; margin:0;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  #app{min-height:100vh; display:flex; flex-direction:column;}
+
+  header.topbar{background:var(--primary-dark); color:var(--surface); position:sticky; top:0; z-index:50; border-bottom:3px solid var(--accent);}
+  .topbar-inner{max-width:1180px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  .logo{display:flex; align-items:center; gap:10px; cursor:pointer;}
+  .logo-mark{width:36px; height:36px; border-radius:9px; background:var(--accent); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk', sans-serif; font-weight:700; color:var(--primary-dark); font-size:18px;}
+  .logo-text{font-size:20px; font-weight:700;}
+  .logo-sub{font-size:11px; opacity:0.65; font-family:'JetBrains Mono',monospace; letter-spacing:0.06em;}
+  nav.nav-links{display:flex; gap:6px; align-items:center;}
+  .nav-btn{background:transparent; border:1px solid transparent; color:var(--surface); padding:9px 14px; border-radius:8px; font-size:14px; font-weight:500; display:flex; align-items:center; gap:6px; opacity:0.85; transition:.15s;}
+  .nav-btn:hover{opacity:1; background:rgba(255,255,255,0.08);}
+  .nav-btn.active{opacity:1; background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.2);}
+  .cart-count{background:var(--accent2); color:#fff; font-size:11px; font-weight:700; border-radius:99px; padding:1px 7px; font-family:'JetBrains Mono',monospace;}
+
+  main{flex:1; width:100%;}
+  .wrap{max-width:1180px; margin:0 auto; padding:28px 20px 60px;}
+
+  .hero{background:linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:var(--surface); border-radius:0 0 28px 28px; margin-bottom:8px;}
+  .hero-inner{max-width:1180px; margin:0 auto; padding:44px 20px 40px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;}
+  .hero h1{font-size:38px; font-weight:700; line-height:1.08;}
+  .hero p{margin-top:10px; opacity:0.8; max-width:440px; font-size:15px; line-height:1.5;}
+  .hero-stamp{border:2px dashed rgba(255,255,255,0.45); border-radius:12px; padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; transform:rotate(-3deg); white-space:nowrap;}
+
+  .section-title{display:flex; align-items:baseline; justify-content:space-between; margin:32px 0 16px;}
+  .section-title h2{font-size:22px;}
+  .muted{color:var(--ink); opacity:0.55; font-size:13px;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:18px;}
+  .card{background:var(--surface); border-radius:var(--radius); border:1px solid var(--line); overflow:hidden; display:flex; flex-direction:column; transition:.15s;}
+  .card:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(27,43,34,0.08);}
+  .card-img{height:150px; display:flex; align-items:center; justify-content:center; font-size:52px; background:var(--paper); border-bottom:1px solid var(--line);}
+  .card-body{padding:14px 14px 16px; display:flex; flex-direction:column; gap:6px; flex:1;}
+  .card-cat{font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--primary); font-weight:600; font-family:'JetBrains Mono',monospace;}
+  .card-name{font-weight:600; font-size:15px; line-height:1.3;}
+  .card-desc{font-size:12.5px; opacity:0.6; line-height:1.4; flex:1;}
+  .card-foot{display:flex; align-items:center; justify-content:space-between; margin-top:8px;}
+  .price{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:16px; color:var(--primary-dark);}
+  .stock-low{font-size:10.5px; color:var(--accent2); font-family:'JetBrains Mono',monospace;}
+  .btn{border:none; border-radius:8px; padding:9px 14px; font-weight:600; font-size:13.5px; transition:.15s;}
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-accent{background:var(--accent); color:var(--primary-dark);}
+  .btn-accent:hover{filter:brightness(1.05);}
+  .btn-outline{background:transparent; border:1.5px solid var(--line); color:var(--ink);}
+  .btn-outline:hover{border-color:var(--primary);}
+  .btn-danger{background:transparent; color:var(--accent2); border:1.5px solid rgba(193,68,45,0.3);}
+  .btn-danger:hover{background:rgba(193,68,45,0.08);}
+  .btn-block{width:100%;}
+  .btn:disabled{opacity:0.4; cursor:not-allowed;}
+
+  .cart-row{display:flex; gap:14px; align-items:center; padding:14px 0; border-bottom:1px solid var(--line);}
+  .cart-row .card-img{width:64px; height:64px; font-size:28px; border-radius:10px; flex-shrink:0; border:1px solid var(--line);}
+  .cart-info{flex:1; min-width:0;}
+  .cart-info .name{font-weight:600; font-size:14.5px;}
+  .cart-info .unit{font-size:12px; opacity:0.55; font-family:'JetBrains Mono',monospace;}
+  .qty-box{display:flex; align-items:center; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .qty-box button{background:var(--surface); border:none; width:28px; height:28px; font-size:15px;}
+  .qty-box button:hover{background:var(--paper);}
+  .qty-box span{width:30px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:13px;}
+  .cart-total-line{display:flex; justify-content:space-between; padding:8px 0; font-size:14px;}
+  .cart-total-line.grand{font-weight:700; font-size:17px; border-top:1px solid var(--line); margin-top:8px; padding-top:14px;}
+  .two-col{display:grid; grid-template-columns:1.4fr 1fr; gap:28px; align-items:flex-start;}
+  @media (max-width:840px){.two-col{grid-template-columns:1fr;}}
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px;}
+
+  .empty{text-align:center; padding:60px 20px; opacity:0.6;}
+  .empty .em{font-size:40px; margin-bottom:10px;}
+
+  label{display:block; font-size:12.5px; font-weight:600; margin:12px 0 5px; text-transform:uppercase; letter-spacing:0.03em; opacity:0.7;}
+  label:first-child{margin-top:0;}
+  input[type=text], input[type=tel], input[type=email], input[type=number], input[type=password], select, textarea{
+    width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:9px; font-family:inherit; font-size:14px; background:#fff; color:var(--ink);
+  }
+  input:focus, select:focus, textarea:focus{outline:2px solid var(--primary); outline-offset:1px; border-color:var(--primary);}
+  textarea{resize:vertical; min-height:70px;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  @media (max-width:520px){.field-row{grid-template-columns:1fr;}}
+
+  .stamp-row{display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px; margin-top:6px;}
+  .stamp{border:2.5px dashed var(--line); border-radius:12px; padding:16px 14px; cursor:pointer; background:#fff; text-align:center; transition:.15s; position:relative;}
+  .stamp:hover{border-color:var(--accent);}
+  .stamp.selected{border-color:var(--primary); background:rgba(35,77,53,0.05); box-shadow:0 0 0 3px rgba(35,77,53,0.08);}
+  .stamp .courier{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; text-transform:uppercase; letter-spacing:0.06em; color:var(--primary-dark);}
+  .stamp .sub{font-size:11px; opacity:0.55; margin-top:4px;}
+  .stamp .fee{font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:8px; color:var(--accent2); font-weight:700;}
+  .stamp-check{position:absolute; top:8px; right:10px; width:18px; height:18px; border-radius:50%; border:1.5px solid var(--line); background:#fff; font-size:12px; display:flex; align-items:center; justify-content:center;}
+  .stamp.selected .stamp-check{background:var(--primary); border-color:var(--primary); color:#fff;}
+
+  .order-note{background:rgba(217,142,43,0.1); border:1px solid rgba(217,142,43,0.3); border-radius:10px; padding:10px 12px; font-size:12.5px; margin-top:14px; line-height:1.5;}
+
+  /* CITY SEARCH DROPDOWN — custom, not native <datalist> (unreliable across browsers, esp. Safari) */
+  .city-combo{position:relative;}
+  .city-combo-list{
+    position:absolute; top:calc(100% + 4px); left:0; right:0; background:#fff;
+    border:1.5px solid var(--line); border-radius:10px; max-height:230px; overflow-y:auto;
+    z-index:20; box-shadow:0 10px 26px rgba(27,43,34,0.14); display:none;
+  }
+  .city-combo-list.open{display:block;}
+  .city-combo-item{padding:9px 13px; font-size:13.5px; cursor:pointer;}
+  .city-combo-item:hover, .city-combo-item.active{background:var(--paper);}
+  .city-combo-item.empty{opacity:0.5; cursor:default;}
+
+  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--primary-dark); color:#fff; padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:500; opacity:0; pointer-events:none; transition:.25s; z-index:200; box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .tabs{display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--line);}
+  .tab{padding:10px 16px; font-weight:600; font-size:14px; border-bottom:2px solid transparent; opacity:0.55;}
+  .tab.active{opacity:1; border-color:var(--primary); color:var(--primary-dark);}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th{text-align:left; padding:10px 8px; font-size:11px; text-transform:uppercase; letter-spacing:0.04em; opacity:0.5; border-bottom:1.5px solid var(--line);}
+  td{padding:10px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .table-wrap{overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:6px 14px;}
+  .row-actions{display:flex; gap:6px;}
+  .row-actions button{padding:5px 10px; font-size:12px;}
+  .badge{font-family:'JetBrains Mono',monospace; font-size:10.5px; padding:3px 8px; border-radius:99px; text-transform:uppercase; font-weight:700; letter-spacing:0.03em;}
+  .badge.new{background:#FDE9D9; color:var(--accent2);}
+  .badge.processing{background:#FFF3CE; color:#8a6d1a;}
+  .badge.shipped{background:#DCEAE1; color:var(--primary);}
+  .badge.delivered{background:#DDE8D0; color:#3c5c26;}
+  select.status-select{width:auto; padding:4px 8px; font-size:12px;}
+  .login-box{max-width:360px; margin:60px auto; text-align:center;}
+  .login-box .em{font-size:34px; margin-bottom:8px;}
+  .admin-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:10px;}
+  .order-card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px;}
+  .order-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;}
+  .order-id{font-family:'JetBrains Mono',monospace; font-size:12px; opacity:0.5;}
+  .order-items{font-size:12.5px; opacity:0.7; margin-top:8px; line-height:1.6;}
+  .order-deliv{font-size:12.5px; margin-top:8px; background:var(--paper); padding:8px 10px; border-radius:8px;}
+  footer{text-align:center; padding:24px; font-size:12px; opacity:0.4; font-family:'JetBrains Mono',monospace;}
+
+  /* PRODUCT PREVIEW MODAL */
+  .card{cursor:pointer;}
+  .card-img img{width:100%; height:100%; object-fit:cover;}
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(22,46,34,0.55); z-index:300;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    animation:fadeIn .15s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  .modal{
+    background:var(--surface); border-radius:18px; max-width:920px; width:100%;
+    max-height:88vh; overflow-y:auto; position:relative;
+    display:grid; grid-template-columns:1fr 1fr;
+  }
+  @media (max-width:760px){ .modal{grid-template-columns:1fr;} }
+  .modal-close{
+    position:absolute; top:14px; right:14px; z-index:2; width:34px; height:34px; border-radius:50%;
+    background:#fff; border:1px solid var(--line); font-size:16px; display:flex; align-items:center; justify-content:center;
+  }
+  .modal-gallery{background:var(--paper); padding:22px; display:flex; flex-direction:column; gap:10px;}
+  .modal-main-img{
+    width:100%; aspect-ratio:1/1; border-radius:14px; overflow:hidden; background:var(--surface);
+    display:flex; align-items:center; justify-content:center; font-size:90px; border:1px solid var(--line);
+  }
+  .modal-main-img img{width:100%; height:100%; object-fit:cover;}
+  .modal-thumbs{display:flex; gap:8px; flex-wrap:wrap;}
+  .modal-thumb{
+    width:56px; height:56px; border-radius:9px; overflow:hidden; border:2px solid transparent; opacity:0.65;
+    background:var(--surface);
+  }
+  .modal-thumb img{width:100%; height:100%; object-fit:cover;}
+  .modal-thumb.active{border-color:var(--primary); opacity:1;}
+  .modal-video{border-radius:12px; overflow:hidden; border:1px solid var(--line); background:#000; aspect-ratio:16/9;}
+  .modal-video iframe, .modal-video video{width:100%; height:100%; display:block;}
+  .modal-body{padding:26px 24px;}
+  .modal-cat{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--primary); font-weight:700; font-family:'JetBrains Mono',monospace;}
+  .modal-title{font-size:24px; font-weight:700; margin-top:6px; line-height:1.2;}
+  .modal-price{font-family:'JetBrains Mono',monospace; font-weight:700; font-size:22px; margin-top:10px; color:var(--primary-dark);}
+  .modal-desc{font-size:14px; line-height:1.65; opacity:0.75; margin-top:14px;}
+  .modal-stock{font-size:12.5px; margin-top:10px; font-family:'JetBrains Mono',monospace;}
+  .modal-actions{display:flex; align-items:center; gap:12px; margin-top:22px;}
+
+
+  /* BOX NOW OFFICIAL LOCKER WIDGET */
+  .boxnow-picker{margin-top:14px;}
+  .boxnow-picker .btn{margin-top:6px;}
+  .boxnow-selection{
+    margin-top:10px; padding:11px 12px; border:1.5px dashed var(--line);
+    border-radius:10px; background:#fff; font-size:13px; line-height:1.45;
+  }
+  .boxnow-selection.selected{
+    border-style:solid; border-color:var(--primary);
+    background:rgba(35,77,53,0.06); color:var(--primary-dark);
+  }
+  #boxnow-widget-trigger{
+    position:fixed; left:-10000px; top:-10000px;
+    width:1px; height:1px; overflow:hidden;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<button type="button" id="boxnow-widget-trigger" class="boxnow-widget-button" aria-hidden="true" tabindex="-1">BOX NOW</button>
+<div id="boxnowmap"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- STATIC DELIVERY DATA ---------------- */
+const OFFICES = {
+  econt: {
+    "София": ["Офис Econt – Център, ул. Витоша 15","Офис Econt – Младост 1, бул. Александър Малинов 78","Офис Econt – Люлин, бул. Джавахарлал Неру 28"],
+    "Пловдив": ["Офис Econt – Център, ул. Иван Вазов 10","Офис Econt – Тракия, бул. Освобождение 100"],
+    "Варна": ["Офис Econt – Морска градина, бул. Приморски 30","Офис Econt – Владислав Варненчик 200"],
+    "Бургас": ["Офис Econt – Център, ул. Александровска 40"],
+    "Русе": ["Офис Econt – Център, бул. Придунавски 20"],
+    "Стара Загора": ["Офис Econt – Център, бул. Цар Симеон Велики 55"]
+  },
+  speedy: {},
+  boxnow: {}
+};
+const COURIER_LABELS = { econt: "Econt", speedy: "Speedy", boxnow: "BoxNow" };
+const COURIER_LOCATION_LABEL = { econt: "Офис", speedy: "Офис", boxnow: "Автомат" };
+const DELIVERY_FEES = { econt: 0, speedy: 0, boxnow: 0 };
+function feeLabel(fee){ return fee === 0 ? "Безплатно" : money(fee); }
+
+/* ---------------- STATE ---------------- */
+let state = {
+  page: "shop",
+  products: [],
+  orders: [],
+  cart: [],
+  isAdmin: false,
+  adminPassword: null,
+  adminTab: "products",
+  editingProduct: null,
+  checkout: { name:"", phone:"", email:"", courier:"econt", city:"", siteId:"", office:"", locationId:"", postalCode:"", note:"" },
+  lastOrder: null,
+  previewProductId: null,
+  previewImageIndex: 0,
+  previewQty: 1,
+  liveOffices: [],
+  officesLoading: false,
+  deliveryError: "",
+  econtCities: null,
+  econtCitiesFetching: false
+};
+
+/* ---------------- API HELPERS ---------------- */
+async function api(path, opts={}){
+  const headers = Object.assign({ "Content-Type":"application/json" }, opts.headers||{});
+  if(state.adminPassword) headers["x-admin-password"] = state.adminPassword;
+  const res = await fetch(path, { ...opts, headers });
+  if(!res.ok){
+    let msg = "Възникна грешка";
+    try{ msg = (await res.json()).error || msg; }catch(e){}
+    throw new Error(msg);
+  }
+  if(res.status === 204) return null;
+  return res.json();
+}
+async function loadProducts(){
+  state.products = await api("/api/products");
+}
+async function loadOrders(){
+  state.orders = await api("/api/orders");
+}
+
+/* ---------------- UTIL ---------------- */
+function money(n){ return n.toFixed(2) + " €"; }
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove("show"), 2400);
+}
+function cartCount(){ return state.cart.reduce((s,c)=>s+c.qty,0); }
+function cartSubtotal(){
+  return state.cart.reduce((s,c)=>{
+    const p = state.products.find(p=>p.id===c.id);
+    return p ? s + p.price*c.qty : s;
+  },0);
+}
+function findProduct(id){ return state.products.find(p=>p.id===id); }
+function go(page){ state.page = page; render(); window.scrollTo({top:0, behavior:"smooth"}); }
+function normalize(s){ return (s||"").trim().toLowerCase(); }
+
+// Full live list of towns/villages for Econt once loaded; curated sample list otherwise.
+function getCityListForCourier(courier){
+  if(courier === "econt" && state.econtCities && state.econtCities.length > 0){
+    return state.econtCities.map(c=>c.name).sort((a,b)=>a.localeCompare(b,"bg"));
+  }
+  return Object.keys(OFFICES[courier]);
+}
+
+async function getEcontCities(){
+  if(state.econtCities) return state.econtCities;
+  try{
+    const cities = await api("/api/delivery/econt/cities");
+    state.econtCities = cities;
+    return cities;
+  }catch(e){
+    state.econtCities = []; // stop retrying; getCityListForCourier falls back to the curated list
+    return [];
+  }
+}
+
+// Loads real Econt or Speedy offices and preserves their courier IDs.
+async function fetchLiveOffices(courier, cityName, knownSiteId){
+  if(courier === "econt"){
+    const cities = await getEcontCities();
+    const match = knownSiteId
+      ? { id: knownSiteId, name: cityName }
+      : cities.find(c => normalize(c.name) === normalize(cityName));
+    if(!match) throw new Error("Населеното място не е намерено в Econt.");
+    const offices = await api("/api/delivery/econt/offices?cityId=" + encodeURIComponent(match.id));
+    return offices.map(o => ({
+      id: String(o.id || ""),
+      label: `Офис Econt – ${o.name}${o.address ? ", " + o.address : ""}`
+    }));
+  }
+
+  if(courier === "speedy"){
+    let siteId = knownSiteId;
+    if(!siteId){
+      const sitesRes = await api("/api/delivery/speedy/sites?name=" + encodeURIComponent(cityName));
+      if(!sitesRes.configured) throw new Error("Speedy API не е конфигуриран.");
+      const site = (sitesRes.sites || []).find(s => normalize(s.name) === normalize(cityName)) || (sitesRes.sites || [])[0];
+      siteId = site?.id;
+    }
+    if(!siteId) throw new Error("Населеното място не е намерено в Speedy.");
+    const officesRes = await api("/api/delivery/speedy/offices?siteId=" + encodeURIComponent(siteId));
+    if(!officesRes.configured) throw new Error("Speedy API не е конфигуриран.");
+    return (officesRes.offices || []).map(o => ({
+      id: String(o.id || ""),
+      label: `Офис Speedy – ${o.name}${o.address ? ", " + o.address : ""}`
+    }));
+  }
+
+  return [];
+}
+
+
+/* ---------------- BOX NOW WIDGET ---------------- */
+function setBoxNowLocker(selected){
+  const lockerId = String(selected?.boxnowLockerId || "").trim();
+  const address = String(selected?.boxnowLockerAddressLine1 || "").trim();
+  const postalCode = String(selected?.boxnowLockerPostalCode || "").trim();
+
+  if(!lockerId){
+    showToast("Не успяхме да прочетем избрания BOX NOW автомат.");
+    return;
+  }
+
+  const parts = [`BOX NOW автомат #${lockerId}`];
+  if(address) parts.push(address);
+  if(postalCode) parts.push(postalCode);
+  const officeLabel = parts.join(", ");
+
+  state.checkout.siteId = "";
+  state.checkout.locationId = lockerId;
+  state.checkout.postalCode = postalCode;
+  // The current server requires a non-empty city field. The postcode keeps the
+  // existing server.js compatible without requiring BOX NOW API credentials.
+  state.checkout.city = postalCode || address || "BOX NOW";
+  state.checkout.office = officeLabel;
+
+  const selection = document.getElementById("boxnow-selected");
+  if(selection){
+    selection.textContent = "Избран автомат: " + officeLabel;
+    selection.classList.add("selected");
+  }
+  const button = document.querySelector("[data-boxnow-open]");
+  if(button) button.textContent = "Смени BOX NOW автомат";
+  showToast("BOX NOW автоматът е избран.");
+}
+
+
+/* ---------------- CART ACTIONS ---------------- */
+function addToCart(id, qty){
+  qty = qty || 1;
+  const existing = state.cart.find(c=>c.id===id);
+  const product = findProduct(id);
+  if(!product) return;
+  const currentQty = existing ? existing.qty : 0;
+  if(currentQty >= product.stock){ showToast("Няма повече наличност."); return; }
+  const addQty = Math.min(qty, product.stock - currentQty);
+  if(existing){ existing.qty += addQty; } else { state.cart.push({id, qty:addQty}); }
+  showToast(product.name + " добавен в кошницата");
+  render();
+}
+function closePreview(){
+  state.previewProductId = null;
+  render();
+}
+function changeQty(id, delta){
+  const item = state.cart.find(c=>c.id===id);
+  if(!item) return;
+  const product = findProduct(id);
+  item.qty += delta;
+  if(item.qty <= 0){ state.cart = state.cart.filter(c=>c.id!==id); }
+  else if(product && item.qty > product.stock){ item.qty = product.stock; }
+  render();
+}
+function removeFromCart(id){ state.cart = state.cart.filter(c=>c.id!==id); render(); }
+
+/* ---------------- CHECKOUT ---------------- */
+function selectCity(cityName, knownSiteId){
+  state.checkout.city = cityName;
+  state.checkout.siteId = knownSiteId ? String(knownSiteId) : "";
+  state.checkout.office = "";
+  state.checkout.locationId = "";
+  state.checkout.postalCode = "";
+  state.liveOffices = [];
+  state.deliveryError = "";
+  state.officesLoading = Boolean(cityName);
+  render();
+  if(!cityName) return;
+
+  const courier = state.checkout.courier;
+  fetchLiveOffices(courier, cityName, knownSiteId)
+    .then(offices => {
+      if(state.checkout.courier !== courier || state.checkout.city !== cityName) return;
+      state.liveOffices = offices;
+      state.officesLoading = false;
+      if(offices.length === 0) state.deliveryError = "Няма намерени офиси за това населено място.";
+      render();
+    })
+    .catch(error => {
+      if(state.checkout.courier !== courier || state.checkout.city !== cityName) return;
+      state.liveOffices = [];
+      state.officesLoading = false;
+      state.deliveryError = error.message || "Офисите не можаха да бъдат заредени.";
+      render();
+    });
+}
+
+async function placeOrder(e){
+  e.preventDefault();
+  const c = state.checkout;
+  if(!c.name.trim() || !c.phone.trim()){ showToast("Моля, попълнете име и телефон."); return; }
+  if(!c.city || !c.office){ showToast(c.courier === "boxnow" ? "Моля, изберете BOX NOW автомат." : "Моля, изберете офис за доставка."); return; }
+  if(state.cart.length===0){ showToast("Кошницата е празна."); return; }
+
+  try{
+    const order = await api("/api/orders", {
+      method:"POST",
+      body: JSON.stringify({
+        customer: { name:c.name, phone:c.phone, email:c.email },
+        delivery: { courier:c.courier, city:c.city, siteId:c.siteId || "", office:c.office, locationId:c.locationId || "", postalCode:c.postalCode || "", note:c.note },
+        items: state.cart
+      })
+    });
+    state.cart = [];
+    state.lastOrder = order;
+    state.checkout = { name:"", phone:"", email:"", courier:"econt", city:"", siteId:"", office:"", locationId:"", postalCode:"", note:"" };
+    await loadProducts(); // refresh stock numbers
+    go("confirmation");
+  }catch(err){
+    showToast(err.message || "Грешка при поръчката.");
+  }
+}
+
+/* ---------------- ADMIN ---------------- */
+async function tryAdminLogin(pw){
+  try{
+    const res = await fetch("/api/admin/verify", {
+      method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({password:pw})
+    });
+    if(!res.ok) throw new Error();
+    state.adminPassword = pw;
+    state.isAdmin = true;
+    await loadOrders();
+    render();
+  }catch(e){
+    showToast("Грешна парола.");
+  }
+}
+function startEditProduct(id){
+  state.editingProduct = id ? {...findProduct(id)} : { id:null, name:"", price:0, category:"", stock:0, emoji:"🛍️", desc:"", images:[], video:"" };
+  render();
+  setTimeout(()=>document.getElementById("admin-form-top")?.scrollIntoView({behavior:"smooth"}), 50);
+}
+async function saveProductForm(e){
+  e.preventDefault();
+  const f = state.editingProduct;
+  if(!f.name.trim() || f.price<=0){ showToast("Попълнете име и валидна цена."); return; }
+  try{
+    if(f.id){
+      await api("/api/products/"+f.id, { method:"PUT", body: JSON.stringify(f) });
+    }else{
+      await api("/api/products", { method:"POST", body: JSON.stringify(f) });
+    }
+    await loadProducts();
+    showToast("Продуктът е запазен.");
+    state.editingProduct = null;
+    render();
+  }catch(err){ showToast(err.message); }
+}
+async function deleteProduct(id){
+  if(!confirm("Изтриване на продукта?")) return;
+  try{
+    await api("/api/products/"+id, { method:"DELETE" });
+    await loadProducts();
+    showToast("Продуктът е изтрит.");
+    render();
+  }catch(err){ showToast(err.message); }
+}
+async function moveProduct(id, direction){
+  const idx = state.products.findIndex(p=>p.id===id);
+  const swapIdx = idx + direction;
+  if(idx===-1 || swapIdx<0 || swapIdx>=state.products.length) return;
+  const arr = state.products;
+  [arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]];
+  render(); // optimistic UI update
+  try{
+    await api("/api/products/reorder", { method:"PUT", body: JSON.stringify({ order: arr.map(p=>p.id) }) });
+  }catch(err){
+    showToast(err.message || "Грешка при пренареждане.");
+    await loadProducts();
+    render();
+  }
+}
+async function updateOrderStatus(id, status){
+  try{
+    await api("/api/orders/"+id, { method:"PATCH", body: JSON.stringify({status}) });
+    const o = state.orders.find(o=>o.id===id);
+    if(o) o.status = status;
+    render();
+  }catch(err){ showToast(err.message); }
+}
+
+/* ---------------- RENDER ---------------- */
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML = `${Header()}<main>${Page()}</main><footer>Кошница © 2026 — доставка с Econt, Speedy и BOX NOW</footer>${ProductModal()}`;
+  bindEvents();
+}
+function Header(){
+  const p = state.page;
+  const navBtn = (id,label,extra="") => `<button class="nav-btn ${p===id?'active':''}" data-nav="${id}">${label}${extra}</button>`;
+  return `
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo" data-nav="shop">
+        <div class="logo-mark">К</div>
+        <div><div class="logo-text">Кошница</div><div class="logo-sub">SHOP.BG</div></div>
+      </div>
+      <nav class="nav-links">
+        ${navBtn("shop","Магазин")}
+        ${navBtn("cart","Кошница", cartCount()>0 ? ` <span class="cart-count">${cartCount()}</span>` : "")}
+        ${navBtn("admin","Админ")}
+      </nav>
+    </div>
+  </header>`;
+}
+function Page(){
+  if(state.page==="shop") return ShopPage();
+  if(state.page==="cart") return CartPage();
+  if(state.page==="checkout") return CheckoutPage();
+  if(state.page==="confirmation") return ConfirmationPage();
+  if(state.page==="admin") return state.isAdmin ? AdminPage() : AdminLoginPage();
+  return ShopPage();
+}
+function ShopPage(){
+  return `
+    <div class="hero">
+      <div class="hero-inner">
+        <div>
+          <h1>Всичко за дома,<br>доставено бързо.</h1>
+          <p>Изберете стоки и ги получете безплатно в удобен за вас офис на Econt, Speedy или автомат на BoxNow — навсякъде в България.</p>
+        </div>
+        <div class="hero-stamp">✓ Безплатна доставка<br>Econt · Speedy · BoxNow</div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="section-title"><h2>Продукти</h2><span class="muted">${state.products.length} артикула</span></div>
+      <div class="grid">${state.products.map(ProductCard).join("")}</div>
+    </div>`;
+}
+function ProductCard(p){
+  const inCart = state.cart.find(c=>c.id===p.id);
+  const availableMore = p.stock - (inCart?inCart.qty:0);
+  const thumb = (p.images && p.images[0]) ? `<img src="${escapeAttr(p.images[0])}" alt="${escapeAttr(p.name)}" loading="lazy">` : (p.emoji || "🛍️");
+  return `
+    <div class="card" data-preview="${p.id}">
+      <div class="card-img">${thumb}</div>
+      <div class="card-body">
+        <div class="card-cat">${escapeHtml(p.category||"")}</div>
+        <div class="card-name">${escapeHtml(p.name)}</div>
+        <div class="card-desc">${escapeHtml(p.desc||"")}</div>
+        ${p.stock<=5 ? `<div class="stock-low">${p.stock===0?"Изчерпан":"Само "+p.stock+" бр. в наличност"}</div>` : ""}
+        <div class="card-foot">
+          <span class="price">${money(p.price)}</span>
+          <button class="btn btn-primary" data-add="${p.id}" data-stop-preview="1" ${availableMore<=0?"disabled":""}>+ Кошница</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function VideoEmbed(url){
+  if(!url) return "";
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/)([\w-]{6,})/);
+  if(yt){
+    return `<div class="modal-video"><iframe src="https://www.youtube.com/embed/${yt[1]}" title="Видео на продукта" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+  }
+  if(/\.mp4($|\?)/.test(url)){
+    return `<div class="modal-video"><video src="${escapeAttr(url)}" controls></video></div>`;
+  }
+  return `<a href="${escapeAttr(url)}" target="_blank" rel="noopener" class="muted">Гледай видео →</a>`;
+}
+
+function ProductModal(){
+  if(!state.previewProductId) return "";
+  const p = findProduct(state.previewProductId);
+  if(!p) return "";
+  const images = (p.images && p.images.length) ? p.images : [];
+  const idx = Math.min(state.previewImageIndex, Math.max(images.length-1,0));
+  const mainImg = images[idx];
+  const inCart = state.cart.find(c=>c.id===p.id);
+  const availableMore = p.stock - (inCart?inCart.qty:0);
+  return `
+  <div class="modal-overlay" data-modal-overlay="1">
+    <div class="modal">
+      <button class="modal-close" data-modal-close="1">✕</button>
+      <div class="modal-gallery">
+        <div class="modal-main-img">${mainImg ? `<img src="${escapeAttr(mainImg)}" alt="${escapeAttr(p.name)}">` : (p.emoji||"🛍️")}</div>
+        ${images.length>1 ? `<div class="modal-thumbs">${images.map((img,i)=>`<div class="modal-thumb ${i===idx?'active':''}" data-thumb="${i}"><img src="${escapeAttr(img)}" alt=""></div>`).join("")}</div>` : ""}
+        ${VideoEmbed(p.video)}
+      </div>
+      <div class="modal-body">
+        <div class="modal-cat">${escapeHtml(p.category||"")}</div>
+        <div class="modal-title">${escapeHtml(p.name)}</div>
+        <div class="modal-price">${money(p.price)}</div>
+        <div class="modal-desc">${escapeHtml(p.desc||"Няма добавено описание.")}</div>
+        <div class="modal-stock ${p.stock<=5?'stock-low':'muted'}">${p.stock===0?"Изчерпан":"В наличност: "+p.stock+" бр."}</div>
+        <div class="modal-actions">
+          <div class="qty-box">
+            <button data-modal-qty-minus="1">−</button>
+            <span>${state.previewQty}</span>
+            <button data-modal-qty-plus="1">+</button>
+          </div>
+          <button class="btn btn-accent" data-modal-add="${p.id}" ${availableMore<=0?"disabled":""}>Добави в кошницата</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function CartPage(){
+  if(state.cart.length===0){
+    return `<div class="wrap"><div class="empty"><div class="em">🧺</div><h3>Кошницата е празна</h3><p class="muted">Разгледайте продуктите и добавете нещо хубаво.</p>
+    <div style="margin-top:16px;"><button class="btn btn-primary" data-nav="shop">Към магазина</button></div></div></div>`;
+  }
+  const subtotal = cartSubtotal();
+  return `
+  <div class="wrap">
+    <div class="section-title"><h2>Кошница</h2><span class="muted">${cartCount()} артикула</span></div>
+    <div class="two-col">
+      <div class="panel">
+        ${state.cart.map(c=>{
+          const p = findProduct(c.id); if(!p) return "";
+          return `
+          <div class="cart-row">
+            <div class="card-img">${p.emoji}</div>
+            <div class="cart-info"><div class="name">${escapeHtml(p.name)}</div><div class="unit">${money(p.price)} / бр.</div></div>
+            <div class="qty-box"><button data-qty-minus="${p.id}">−</button><span>${c.qty}</span><button data-qty-plus="${p.id}">+</button></div>
+            <div class="price" style="width:80px; text-align:right;">${money(p.price*c.qty)}</div>
+            <button class="btn btn-danger" data-remove="${p.id}">✕</button>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="panel">
+        <h3 style="margin-bottom:10px;">Обобщение</h3>
+        <div class="cart-total-line"><span>Междинна сума</span><span class="mono">${money(subtotal)}</span></div>
+        <div class="cart-total-line"><span>Доставка</span><span class="mono">Безплатно</span></div>
+        <div class="cart-total-line grand"><span>Общо</span><span class="mono">${money(subtotal)}</span></div>
+        <button class="btn btn-accent btn-block" style="margin-top:16px;" data-nav="checkout">Продължи към доставка →</button>
+      </div>
+    </div>
+  </div>`;
+}
+function CheckoutPage(){
+  if(state.cart.length===0){ return CartPage(); }
+  const c = state.checkout;
+
+  // Econt uses the complete live settlement list from the existing backend.
+  if(c.courier === "econt" && state.econtCities === null && !state.econtCitiesFetching){
+    state.econtCitiesFetching = true;
+    getEcontCities().then(()=>{ state.econtCitiesFetching = false; render(); });
+  }
+  // Speedy's API only returns up to 10 matches per search (no bulk listing endpoint),
+  // so its city field searches live as you type instead of preloading a full list — see bindEvents().
+
+  const isBoxNow = c.courier === "boxnow";
+  const cities = isBoxNow ? [] : getCityListForCourier(c.courier);
+  const fallbackOffices = (!isBoxNow && c.city && OFFICES[c.courier]?.[c.city])
+    ? OFFICES[c.courier][c.city].map(label => ({ id:"", label }))
+    : [];
+  const offices = state.liveOffices.length ? state.liveOffices : fallbackOffices;
+  const subtotal = cartSubtotal();
+  const fee = DELIVERY_FEES[c.courier];
+  const locLabel = COURIER_LOCATION_LABEL[c.courier];
+
+  return `
+  <div class="wrap">
+    <div class="section-title"><h2>Доставка и данни</h2><span class="muted">Стъпка 2 от 2</span></div>
+    <div class="two-col">
+      <form class="panel" id="checkout-form">
+        <label>Три имена</label>
+        <input type="text" id="f-name" value="${escapeAttr(c.name)}" placeholder="Иван Иванов">
+        <div class="field-row">
+          <div><label>Телефон</label><input type="tel" id="f-phone" value="${escapeAttr(c.phone)}" placeholder="08XX XXX XXX"></div>
+          <div><label>Имейл (по желание)</label><input type="email" id="f-email" value="${escapeAttr(c.email)}" placeholder="ivan@example.com"></div>
+        </div>
+
+        <label>Куриер за доставка</label>
+        <div class="stamp-row">
+          ${Object.keys(OFFICES).map(k=>`
+          <div class="stamp ${c.courier===k?'selected':''}" data-courier="${k}">
+            <div class="stamp-check">${c.courier===k?'✓':''}</div>
+            <div class="courier">${COURIER_LABELS[k]}</div>
+            <div class="sub">Доставка до ${COURIER_LOCATION_LABEL[k].toLowerCase()}</div>
+            <div class="fee">${feeLabel(DELIVERY_FEES[k])}</div>
+          </div>`).join("")}
+        </div>
+
+        ${isBoxNow ? `
+          <div class="boxnow-picker">
+            <label>BOX NOW автомат</label>
+            <button type="button" class="btn btn-primary btn-block" data-boxnow-open="1">
+              ${c.office ? "Смени BOX NOW автомат" : "Избери BOX NOW автомат от картата"}
+            </button>
+            <div id="boxnow-selected" class="boxnow-selection ${c.office ? "selected" : ""}">
+              ${c.office ? "Избран автомат: " + escapeHtml(c.office) : "Все още няма избран автомат."}
+            </div>
+            <div class="muted" style="margin-top:7px; line-height:1.45;">
+              Картата и списъкът с автомати се зареждат директно от официалния BOX NOW уиджет.
+            </div>
+          </div>
+        ` : `
+          <div class="field-row">
+            <div><label>Град или село${state.econtCitiesFetching ? ' (зарежда се пълен списък...)' : ''}</label>
+              <div class="city-combo">
+                <input type="text" id="f-city" autocomplete="off" value="${escapeAttr(c.city)}" placeholder="Започнете да пишете...">
+                <div class="city-combo-list" id="city-combo-list"></div>
+              </div>
+            </div>
+            <div><label>${locLabel}</label>
+              <select id="f-office" ${!c.city || state.officesLoading?"disabled":""}>
+                <option value="">${state.officesLoading ? "Зареждане на офиси..." : (c.city?"Изберете "+locLabel.toLowerCase():"Първо изберете град")}</option>
+                ${offices.map(o=>`<option value="${escapeAttr(o.id || o.label)}" data-office-id="${escapeAttr(o.id || "")}" data-office-label="${escapeAttr(o.label)}" ${(c.locationId ? c.locationId===String(o.id) : c.office===o.label) ? "selected" : ""}>${escapeHtml(o.label)}</option>`).join("")}
+              </select>
+              ${state.deliveryError ? `<div class="small-note" style="color:var(--accent2); margin-top:6px;">${escapeHtml(state.deliveryError)}</div>` : ""}
+            </div>
+          </div>
+        `}
+
+        <label>Бележка към поръчката (по желание)</label>
+        <textarea id="f-note" placeholder="Напр. предпочитан час за получаване">${escapeHtml(c.note)}</textarea>
+        <div class="order-note">
+          ${isBoxNow
+            ? "📦 Изборът на автомат е чрез официалната карта на BOX NOW. Не са нужни API потребителско име и парола за самия избор."
+            : "📦 Изберете населено място и удобен офис за получаване."}
+        </div>
+        <button type="submit" class="btn btn-accent btn-block" style="margin-top:18px;">Потвърди поръчката</button>
+      </form>
+
+      <div class="panel">
+        <h3 style="margin-bottom:10px;">Обобщение</h3>
+        ${state.cart.map(ci=>{
+          const p = findProduct(ci.id);
+          return `<div class="cart-total-line"><span>${escapeHtml(p.name)} × ${ci.qty}</span><span class="mono">${money(p.price*ci.qty)}</span></div>`;
+        }).join("")}
+        <div class="cart-total-line"><span>Доставка (${COURIER_LABELS[c.courier]})</span><span class="mono">Безплатно</span></div>
+        <div class="cart-total-line grand"><span>Общо</span><span class="mono">${money(subtotal+fee)}</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+function ConfirmationPage(){
+  const o = state.lastOrder;
+  if(!o) return ShopPage();
+  return `
+  <div class="wrap">
+    <div class="empty" style="max-width:520px; margin:20px auto;">
+      <div class="em">✅</div><h3>Поръчката е приета!</h3>
+      <p class="muted">Номер на поръчка</p>
+      <p class="mono" style="font-size:18px; font-weight:700;">${o.id}</p>
+      <div class="order-deliv" style="text-align:left; margin-top:16px;">
+        <strong>${COURIER_LABELS[o.delivery.courier] || o.delivery.courier}</strong> · ${escapeHtml(o.delivery.office)}<br>
+        <span class="muted">Обща сума: ${money(o.total)}</span>
+      </div>
+      <div style="margin-top:20px;"><button class="btn btn-primary" data-nav="shop">Обратно към магазина</button></div>
+    </div>
+  </div>`;
+}
+function AdminLoginPage(){
+  return `
+  <div class="wrap">
+    <div class="panel login-box">
+      <div class="em">🔐</div><h3>Вход за администратор</h3>
+      <form id="admin-login-form">
+        <label>Парола</label>
+        <input type="password" id="admin-pw" placeholder="Въведете парола">
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;">Влез</button>
+      </form>
+    </div>
+  </div>`;
+}
+function AdminPage(){
+  return `
+  <div class="wrap">
+    <div class="admin-header"><h2>Администрация</h2><button class="btn btn-outline" data-admin-logout="1">Изход</button></div>
+    <div class="tabs">
+      <div class="tab ${state.adminTab==='products'?'active':''}" data-admin-tab="products">Продукти</div>
+      <div class="tab ${state.adminTab==='orders'?'active':''}" data-admin-tab="orders">Поръчки ${state.orders.length?`(${state.orders.length})`:""}</div>
+    </div>
+    ${state.adminTab==='products' ? AdminProducts() : AdminOrders()}
+  </div>`;
+}
+function AdminProducts(){
+  const f = state.editingProduct;
+  return `
+    <div id="admin-form-top"></div>
+    ${f ? `
+    <div class="panel" style="margin-bottom:20px;">
+      <h3 style="margin-bottom:10px;">${f.id?'Редактиране на продукт':'Нов продукт'}</h3>
+      <form id="product-form">
+        <div class="field-row">
+          <div><label>Име</label><input type="text" id="pf-name" value="${escapeAttr(f.name)}"></div>
+          <div><label>Категория</label><input type="text" id="pf-category" value="${escapeAttr(f.category)}" placeholder="напр. Дом"></div>
+        </div>
+        <div class="field-row">
+          <div><label>Цена (€)</label><input type="number" step="0.01" min="0" id="pf-price" value="${f.price}"></div>
+          <div><label>Наличност (бр.)</label><input type="number" min="0" id="pf-stock" value="${f.stock}"></div>
+        </div>
+        <label>Емоджи / резервна икона (ако няма снимки)</label>
+        <input type="text" id="pf-emoji" value="${escapeAttr(f.emoji||'')}" placeholder="напр. 🛍️">
+        <label>Снимки — по един URL на ред (първата е основна)</label>
+        <textarea id="pf-images" placeholder="https://example.com/снимка1.jpg&#10;https://example.com/снимка2.jpg">${escapeHtml((f.images||[]).join("\n"))}</textarea>
+        <label>Видео URL (по желание — YouTube линк или .mp4)</label>
+        <input type="text" id="pf-video" value="${escapeAttr(f.video||'')}" placeholder="https://youtube.com/watch?v=...">
+        <label>Описание</label>
+        <textarea id="pf-desc">${escapeHtml(f.desc||'')}</textarea>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button type="submit" class="btn btn-accent">Запази продукта</button>
+          <button type="button" class="btn btn-outline" data-cancel-edit="1">Отказ</button>
+        </div>
+      </form>
+    </div>` : `<button class="btn btn-primary" style="margin-bottom:18px;" data-new-product="1">+ Добави продукт</button>`}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ред</th><th>Продукт</th><th>Категория</th><th>Цена</th><th>Наличност</th><th></th></tr></thead>
+        <tbody>
+          ${state.products.map((p,i)=>`
+            <tr>
+              <td>
+                <div class="row-actions">
+                  <button class="btn btn-outline" data-move-up="${p.id}" ${i===0?"disabled":""} title="Премести нагоре">▲</button>
+                  <button class="btn btn-outline" data-move-down="${p.id}" ${i===state.products.length-1?"disabled":""} title="Премести надолу">▼</button>
+                </div>
+              </td>
+              <td>${(p.images&&p.images[0]) ? `<img src="${escapeAttr(p.images[0])}" style="width:26px;height:26px;object-fit:cover;border-radius:6px;vertical-align:middle;">` : (p.emoji||'🛍️')} &nbsp; ${escapeHtml(p.name)}</td>
+              <td>${escapeHtml(p.category||'')}</td>
+              <td class="mono">${money(p.price)}</td>
+              <td class="mono">${p.stock}</td>
+              <td><div class="row-actions">
+                <button class="btn btn-outline" data-edit-product="${p.id}">Редакция</button>
+                <button class="btn btn-danger" data-delete-product="${p.id}">Изтрий</button>
+              </div></td>
+            </tr>`).join("")}
+        </tbody>
+      </table>
+      ${state.products.length===0 ? `<p class="muted" style="padding:16px;">Няма добавени продукти.</p>` : ""}
+    </div>`;
+}
+function AdminOrders(){
+  if(state.orders.length===0){ return `<div class="empty"><div class="em">📭</div><h3>Все още няма поръчки</h3></div>`; }
+  const statusLabels = {new:"Нова", processing:"Обработва се", shipped:"Изпратена", delivered:"Доставена"};
+  return state.orders.map(o=>`
+    <div class="order-card">
+      <div class="order-top">
+        <div>
+          <div class="order-id">${o.id} · ${new Date(o.date).toLocaleString('bg-BG')}</div>
+          <div style="font-weight:600; margin-top:2px;">${escapeHtml(o.customer.name)} · ${escapeHtml(o.customer.phone)}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="badge ${o.status}">${statusLabels[o.status]}</span>
+          <select class="status-select" data-order-status="${o.id}">
+            ${Object.keys(statusLabels).map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${statusLabels[s]}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="order-items">${o.items.map(it=>`${escapeHtml(it.name)} × ${it.qty} — ${money(it.price*it.qty)}`).join("<br>")}</div>
+      <div class="order-deliv">
+        <strong>${COURIER_LABELS[o.delivery.courier] || o.delivery.courier}</strong> · ${escapeHtml(o.delivery.office)}
+        ${o.delivery.note ? `<br><span class="muted">Бележка: ${escapeHtml(o.delivery.note)}</span>` : ""}
+      </div>
+      <div style="margin-top:8px; font-weight:700;">Общо: ${money(o.total)}</div>
+    </div>`).join("");
+}
+
+/* ---------------- ESCAPE HELPERS ---------------- */
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
+function escapeAttr(s){ return escapeHtml(s); }
+
+/* ---------------- EVENT BINDING ---------------- */
+function bindEvents(){
+  document.querySelectorAll("[data-nav]").forEach(el=>el.addEventListener("click", ()=>go(el.getAttribute("data-nav"))));
+  document.querySelectorAll("[data-add]").forEach(el=>el.addEventListener("click", (ev)=>{
+    if(el.hasAttribute("data-stop-preview")) ev.stopPropagation();
+    addToCart(el.getAttribute("data-add"));
+  }));
+  document.querySelectorAll("[data-preview]").forEach(el=>el.addEventListener("click", ()=>{
+    state.previewProductId = el.getAttribute("data-preview");
+    state.previewImageIndex = 0;
+    state.previewQty = 1;
+    render();
+  }));
+  document.querySelectorAll("[data-modal-overlay]").forEach(el=>el.addEventListener("click", (ev)=>{
+    if(ev.target === el){ closePreview(); }
+  }));
+  document.querySelectorAll("[data-modal-close]").forEach(el=>el.addEventListener("click", closePreview));
+  document.querySelectorAll("[data-thumb]").forEach(el=>el.addEventListener("click", ()=>{
+    state.previewImageIndex = parseInt(el.getAttribute("data-thumb"));
+    render();
+  }));
+  document.querySelectorAll("[data-modal-qty-plus]").forEach(el=>el.addEventListener("click", ()=>{
+    const p = findProduct(state.previewProductId);
+    if(p) state.previewQty = Math.min(state.previewQty+1, p.stock || 1);
+    render();
+  }));
+  document.querySelectorAll("[data-modal-qty-minus]").forEach(el=>el.addEventListener("click", ()=>{
+    state.previewQty = Math.max(1, state.previewQty-1);
+    render();
+  }));
+  document.querySelectorAll("[data-modal-add]").forEach(el=>el.addEventListener("click", ()=>{
+    const id = el.getAttribute("data-modal-add");
+    addToCart(id, state.previewQty);
+    closePreview();
+  }));
+  document.querySelectorAll("[data-qty-plus]").forEach(el=>el.addEventListener("click", ()=>changeQty(el.getAttribute("data-qty-plus"), 1)));
+  document.querySelectorAll("[data-qty-minus]").forEach(el=>el.addEventListener("click", ()=>changeQty(el.getAttribute("data-qty-minus"), -1)));
+  document.querySelectorAll("[data-remove]").forEach(el=>el.addEventListener("click", ()=>removeFromCart(el.getAttribute("data-remove"))));
+  document.querySelectorAll("[data-courier]").forEach(el=>el.addEventListener("click", ()=>{
+    persistCheckoutFields();
+    state.checkout.courier = el.getAttribute("data-courier");
+    state.checkout.city = "";
+    state.checkout.siteId = "";
+    state.checkout.office = "";
+    state.checkout.locationId = "";
+    state.checkout.postalCode = "";
+    state.liveOffices = [];
+    state.officesLoading = false;
+    state.deliveryError = "";
+    render();
+  }));
+
+  document.querySelectorAll("[data-boxnow-open]").forEach(el=>el.addEventListener("click", ()=>{
+    persistCheckoutFields();
+    if(window.__boxnowWidgetFailed){
+      showToast("BOX NOW картата не можа да се зареди. Проверете интернет връзката.");
+      return;
+    }
+    const trigger = document.getElementById("boxnow-widget-trigger");
+    if(trigger) trigger.click();
+  }));
+
+  const cityEl = document.getElementById("f-city");
+  const cityListEl = document.getElementById("city-combo-list");
+  if(cityEl && cityListEl){
+    const courier = state.checkout.courier;
+    const allCities = courier === "econt" ? (state.econtCities || []) : null;
+    let searchToken = 0; // guards against a slow older request overwriting a newer one
+
+    const bindItemHandlers = () => {
+      cityListEl.querySelectorAll("[data-city]").forEach(el=>{
+        el.addEventListener("mousedown", (ev)=>{ // mousedown fires before blur, so the click registers
+          ev.preventDefault();
+          const chosen = el.getAttribute("data-city");
+          const siteId = el.getAttribute("data-site-id");
+          cityEl.value = chosen;
+          cityListEl.classList.remove("open");
+          persistCheckoutFields();
+          selectCity(chosen, siteId ? Number(siteId) : null);
+        });
+      });
+    };
+    const showMessage = (msg) => {
+      cityListEl.innerHTML = `<div class="city-combo-item empty">${msg}</div>`;
+      cityListEl.classList.add("open");
+    };
+    const showMatches = (items) => { // items: [{name, id?}]
+      if(items.length === 0){
+        showMessage("Няма съвпадения");
+        return;
+      }
+      cityListEl.innerHTML = items.slice(0, 200).map(it =>
+        `<div class="city-combo-item" data-city="${escapeAttr(it.name)}" ${it.id!=null ? `data-site-id="${it.id}"` : ""}>${escapeHtml(it.name)}</div>`
+      ).join("");
+      cityListEl.classList.add("open");
+      bindItemHandlers();
+    };
+
+    const runSearch = async (rawValue) => {
+      const q = rawValue.trim();
+      if(courier === "econt"){
+        if(q.length === 0){
+          showMessage(`Пишете, за да търсите сред ${allCities.length} населени места...`);
+          return;
+        }
+        const matches = allCities.filter(city => normalize(city.name).includes(normalize(q))).map(city=>({name:city.name, id:city.id}));
+        showMatches(matches);
+        return;
+      }
+      if(courier === "speedy"){
+        if(q.length < 2){
+          showMessage("Въведете поне 2 букви...");
+          return;
+        }
+        showMessage("Търсене...");
+        const myToken = ++searchToken;
+        try{
+          const res = await api("/api/delivery/speedy/sites?name=" + encodeURIComponent(q));
+          if(myToken !== searchToken) return; // a newer keystroke already started a fresher search
+          if(!res.configured){
+            showMessage("Speedy API не е конфигуриран на сървъра.");
+            return;
+          }
+          showMatches((res.sites || []).map(s => ({ name: s.name, id: s.id })));
+        }catch(e){
+          if(myToken === searchToken) showMessage("Грешка при търсене. Опитайте отново.");
+        }
+        return;
+      }
+      showMatches([]);
+    };
+
+    let debounceTimer = null;
+    cityEl.addEventListener("focus", ()=>runSearch(cityEl.value));
+    cityEl.addEventListener("input", ()=>{
+      clearTimeout(debounceTimer);
+      const val = cityEl.value;
+      debounceTimer = setTimeout(()=>runSearch(val), courier === "speedy" ? 350 : 0);
+    });
+    cityEl.addEventListener("blur", ()=>{ setTimeout(()=>cityListEl.classList.remove("open"), 150); });
+    cityEl.addEventListener("keydown", (ev)=>{
+      if(ev.key === "Enter"){
+        ev.preventDefault();
+        const items = cityListEl.querySelectorAll("[data-city]");
+        if(items.length === 1) items[0].dispatchEvent(new Event("mousedown", {cancelable:true}));
+      }else if(ev.key === "Escape"){
+        cityListEl.classList.remove("open");
+      }
+    });
+  }
+  const officeEl = document.getElementById("f-office");
+  if(officeEl) officeEl.addEventListener("change", ()=>{
+    const option = officeEl.options[officeEl.selectedIndex];
+    state.checkout.locationId = option?.getAttribute("data-office-id") || "";
+    state.checkout.office = option?.getAttribute("data-office-label") || option?.textContent || "";
+    if(!officeEl.value) state.checkout.office = "";
+  });
+
+  const checkoutForm = document.getElementById("checkout-form");
+  if(checkoutForm) checkoutForm.addEventListener("submit", (e)=>{ persistCheckoutFields(); placeOrder(e); });
+
+  const adminLoginForm = document.getElementById("admin-login-form");
+  if(adminLoginForm) adminLoginForm.addEventListener("submit", (e)=>{ e.preventDefault(); tryAdminLogin(document.getElementById("admin-pw").value); });
+
+  document.querySelectorAll("[data-admin-logout]").forEach(el=>el.addEventListener("click", ()=>{ state.isAdmin=false; state.adminPassword=null; go("shop"); }));
+  document.querySelectorAll("[data-admin-tab]").forEach(el=>el.addEventListener("click", ()=>{ state.adminTab = el.getAttribute("data-admin-tab"); render(); }));
+  document.querySelectorAll("[data-new-product]").forEach(el=>el.addEventListener("click", ()=>startEditProduct(null)));
+  document.querySelectorAll("[data-edit-product]").forEach(el=>el.addEventListener("click", ()=>startEditProduct(el.getAttribute("data-edit-product"))));
+  document.querySelectorAll("[data-delete-product]").forEach(el=>el.addEventListener("click", ()=>deleteProduct(el.getAttribute("data-delete-product"))));
+  document.querySelectorAll("[data-cancel-edit]").forEach(el=>el.addEventListener("click", ()=>{ state.editingProduct=null; render(); }));
+  document.querySelectorAll("[data-move-up]").forEach(el=>el.addEventListener("click", ()=>moveProduct(el.getAttribute("data-move-up"), -1)));
+  document.querySelectorAll("[data-move-down]").forEach(el=>el.addEventListener("click", ()=>moveProduct(el.getAttribute("data-move-down"), 1)));
+  document.querySelectorAll("[data-order-status]").forEach(el=>el.addEventListener("change", ()=>updateOrderStatus(el.getAttribute("data-order-status"), el.value)));
+
+  const productForm = document.getElementById("product-form");
+  if(productForm) productForm.addEventListener("submit", (e)=>{
+    const f = state.editingProduct;
+    f.name = document.getElementById("pf-name").value;
+    f.category = document.getElementById("pf-category").value;
+    f.price = parseFloat(document.getElementById("pf-price").value) || 0;
+    f.stock = parseInt(document.getElementById("pf-stock").value) || 0;
+    f.emoji = document.getElementById("pf-emoji").value;
+    f.desc = document.getElementById("pf-desc").value;
+    f.images = document.getElementById("pf-images").value.split("\n").map(s=>s.trim()).filter(Boolean);
+    f.video = document.getElementById("pf-video").value.trim();
+    saveProductForm(e);
+  });
+}
+function persistCheckoutFields(){
+  const g = id => document.getElementById(id);
+  if(g("f-name")) state.checkout.name = g("f-name").value;
+  if(g("f-phone")) state.checkout.phone = g("f-phone").value;
+  if(g("f-email")) state.checkout.email = g("f-email").value;
+  if(g("f-note")) state.checkout.note = g("f-note").value;
+}
+
+/* ---------------- OFFICIAL BOX NOW MAP WIDGET ---------------- */
+var _bn_map_widget_config = {
+  parentElement: "#boxnowmap",
+  buttonSelector: ".boxnow-widget-button",
+  type: "popup",
+  autoselect: false,
+  autoclose: true,
+  afterSelect: setBoxNowLocker
+};
+
+(function(d){
+  var e = d.createElement("script");
+  e.src = "https://widget-cdn.boxnow.bg/map-widget/client/v5.js";
+  e.async = true;
+  e.defer = true;
+  e.onerror = function(){ window.__boxnowWidgetFailed = true; };
+  d.getElementsByTagName("head")[0].appendChild(e);
+})(document);
+
+/* ---------------- INIT ---------------- */
+async function init(){
+  document.getElementById("app").innerHTML = `<div class="wrap"><p class="muted" style="padding:60px 0; text-align:center;">Зареждане…</p></div>`;
+  try{ await loadProducts(); }catch(e){ state.products = []; }
+  render();
+}
+init();
+</script>
+</body>
+</html>

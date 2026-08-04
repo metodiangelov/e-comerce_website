@@ -46,7 +46,7 @@ npm test
 
 ## Качване в GitHub
 
-1. Създай празно repository в GitHub, например `koshnitsa-shop`. Не добавяй README или `.gitignore` от GitHub, защото те вече са в проекта.
+1. Създай празно repository в GitHub, например `e-comerce_website`. Не добавяй README или `.gitignore` от GitHub, защото те вече са в проекта.
 2. В PowerShell отвори папката на проекта и изпълни:
 
 ```powershell
@@ -54,7 +54,7 @@ git init
 git add .
 git commit -m "Initial Koshnitsa shop"
 git branch -M main
-git remote add origin https://github.com/ТВОЕТО-ИМЕ/koshnitsa-shop.git
+git remote add origin https://github.com/metodiangelov/e-comerce_website.git
 git push -u origin main
 ```
 
